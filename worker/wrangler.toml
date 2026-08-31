@@ -1,0 +1,35 @@
+name = "inkbound-sync"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# Create the KV namespace first (dashboard: Workers & Pages → KV → Create
+# namespace, name it e.g. "INKBOUND_KV"; or via CLI: `wrangler kv namespace
+# create INKBOUND_KV`), then paste its id below. Only needed if you deploy
+# with wrangler — the dashboard Quick Edit flow in worker/README.md binds
+# the namespace through the UI instead and doesn't need this file at all.
+[[kv_namespaces]]
+binding = "INKBOUND_KV"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# Optional: require a shared secret on every KV-sync request. Set it with
+# `wrangler secret put WORKER_SYNC_KEY`, or via the dashboard (Settings →
+# Variables and Secrets → Add → Secret). Leave unset for an open endpoint.
+# [vars]
+# (secrets are not set here — use `wrangler secret put` or the dashboard)
+
+# ---- AI marking: Cloudflare Workers AI (final fallback provider) ----
+# No API key needed — this just turns on the native Workers AI binding.
+# Uncomment for CLI deploys; the dashboard flow in worker/README.md adds
+# this binding through the UI instead.
+# [ai]
+# binding = "AI"
+
+# ---- AI marking: external providers (optional, tried in this order) ----
+# These are SECRETS, not plain vars — never put real key values in this
+# file. Set them with `wrangler secret put NAME`, or via the dashboard:
+#   wrangler secret put GEMINI_API_KEY
+#   wrangler secret put GROQ_API_KEY
+#   wrangler secret put XAI_API_KEY
+# All three (plus Workers AI above) are optional — the Worker tries
+# whichever are configured, in order, and index.html falls back to
+# local keyword marking if none are set up or all of them fail.

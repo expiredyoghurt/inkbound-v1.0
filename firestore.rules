@@ -1,0 +1,43 @@
+rules_version = '2';
+
+// Inkbound: The Last Atlas — Firestore security rules
+//
+// Security model (matches the app's existing "plaintext, client-side"
+// approach used for Mender/teacher accounts): any signed-in user may
+// read and write the app's sync documents. The app signs every visitor
+// in anonymously on load (see FIREBASE_ENABLED / firebase.auth().signInAnonymously()
+// in index.html), so in practice this just keeps completely random,
+// unauthenticated internet traffic off your database — it does NOT
+// stop one student from editing another student's data, or a student
+// from editing admin/teacher content, because the app itself has no
+// per-user permission tiers. That's consistent with how it already
+// works in local-only mode.
+//
+// If you want tighter rules later (e.g. only the teacher/admin browser
+// can write config docs, students can only write their own save), you
+// will need to add real authentication (not anonymous) and check
+// request.auth.uid / custom claims below. Until then, treat this
+// Firestore database the same way you'd treat a shared classroom
+// Google Sheet: convenient, not locked down.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Every piece of state the app syncs — Mender accounts, teacher
+    // accounts, saves, and all admin-edited content (question bank
+    // overrides, Airship/Workshop costs, Regatta config, class
+    // standings config) — lives in this one collection, one doc per
+    // logical piece of state. Doc IDs currently in use:
+    //   accounts, teacherAccounts, ocOverrides, regionBankOverrides,
+    //   workshopCostOverrides, stabilityConfig, regattaConfig,
+    //   classStandingsConfig
+    match /inkboundSync/{docId} {
+      allow read, write: if request.auth != null;
+    }
+
+    // Deny everything else by default.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
