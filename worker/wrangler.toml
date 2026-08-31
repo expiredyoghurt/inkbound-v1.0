@@ -9,7 +9,7 @@ compatibility_date = "2026-01-01"
 # the namespace through the UI instead and doesn't need this file at all.
 [[kv_namespaces]]
 binding = "INKBOUND_KV"
-id = "YOUR_KV_NAMESPACE_ID"
+id = "66c65e8dc26840d799909748f619e64d"
 
 # Optional: require a shared secret on every KV-sync request. Set it with
 # `wrangler secret put WORKER_SYNC_KEY`, or via the dashboard (Settings →
