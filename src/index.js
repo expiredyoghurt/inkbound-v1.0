@@ -114,4 +114,13 @@ export default {
       if (!collection) {
         return corsResponse(JSON.stringify({ error: "Missing collection name" }), { status: 400 });
       }
-      return
+      return handleDoc(request, env, collection);
+    }
+
+    if (env.ASSETS) {
+      return env.ASSETS.fetch(request);
+    }
+
+    return new Response("Not Found", { status: 404 });
+  },
+};
